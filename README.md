@@ -1,6 +1,6 @@
 # Vulkan1.2 Triangle + Dynamic Rendering + Sync2 + Extended Dynamic State
 
-Khronos Triangle 1.3をVulkan 1.2でエクステンションを有効にすることで動作するようにし、さらに、シーングラフを表示できるようにしたサンプルである。
+KhronosのサンプルコードTriangle 1.3をVulkan 1.2でエクステンションを有効にすることで動作するようにし、さらに、シーングラフを表示できるようにしたサンプルである。
 
 Khronosのサンプルから変更した部分は以下である。
 
