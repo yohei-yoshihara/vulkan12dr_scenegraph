@@ -26,11 +26,12 @@ void Engine::init_instance() {
             std::back_inserter(required_instance_extensions));
 
   vkb::InstanceBuilder builder;
-  auto inst_ret = builder.set_app_name("Simple Scene Graph V1.2 + Direct Rendering")
-                      .set_engine_name("No Engine")
-                      .enable_extensions(required_instance_extensions)
-                      .require_api_version(VK_MAKE_VERSION(1, 2, 0))
-                      .build();
+  auto inst_ret =
+      builder.set_app_name("Simple Scene Graph V1.2 + Direct Rendering")
+          .set_engine_name("No Engine")
+          .enable_extensions(required_instance_extensions)
+          .require_api_version(VK_MAKE_VERSION(1, 2, 0))
+          .build();
   if (!inst_ret) {
     throw std::runtime_error("failed to create instance");
   }
@@ -129,10 +130,12 @@ void Engine::init_vertex_buffer() {
   for (const auto &node : nodes) {
     const auto &mesh = node->mesh();
     if (!context.meshBufferMap.contains(mesh)) {
-      auto vertex = uploadBuffer(mesh->vertices().data(), mesh->vertices().size() * sizeof(Vertex),
+      auto vertex = uploadBuffer(mesh->vertices().data(),
+                                 mesh->vertices().size() * sizeof(Vertex),
                                  VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-      auto index = uploadBuffer(mesh->indices().data(), mesh->indices().size() * sizeof(IndexType),
-                                 VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+      auto index = uploadBuffer(mesh->indices().data(),
+                                mesh->indices().size() * sizeof(IndexType),
+                                VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
       MeshBuffer meshBuffer{vertex, index};
       context.meshBufferMap[mesh] = meshBuffer;
     }
@@ -494,16 +497,15 @@ void Engine::init_pipeline() {
       .dynamicStateCount = static_cast<uint32_t>(dynamic_states.size()),
       .pDynamicStates = dynamic_states.data()};
 
-  std::array<VkPipelineShaderStageCreateInfo, 2> shader_stages = {{
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-       .stage = VK_SHADER_STAGE_VERTEX_BIT,
-       .module = load_shader_module("shaders/triangle.vert.spv"),
-       .pName = "main"},
-      {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-       .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-       .module = load_shader_module("shaders/triangle.frag.spv"),
-       .pName = "main"}
-  }};
+  std::array<VkPipelineShaderStageCreateInfo, 2> shader_stages = {
+      {{.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_VERTEX_BIT,
+        .module = load_shader_module("shaders/triangle.vert.spv"),
+        .pName = "main"},
+       {.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+        .module = load_shader_module("shaders/triangle.frag.spv"),
+        .pName = "main"}}};
 
   VkPipelineRenderingCreateInfo pipeline_rendering_info{
       .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
@@ -591,14 +593,12 @@ void Engine::render(uint32_t swapchain_index) {
 
   VK_CHECK(vkBeginCommandBuffer(cmd, &begin_info));
 
-  transitionImageLayout(
-      cmd, context.swapchain_images[swapchain_index], VK_IMAGE_LAYOUT_UNDEFINED,
-      VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-      0,
-      VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,         
-      VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,            
-      VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT 
-  );
+  transitionImageLayout(cmd, context.swapchain_images[swapchain_index],
+                        VK_IMAGE_LAYOUT_UNDEFINED,
+                        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, 0,
+                        VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
+                        VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT,
+                        VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT);
   VkClearValue clear_value{.color = {{0.01f, 0.01f, 0.033f, 1.0f}}};
 
   VkRenderingAttachmentInfo color_attachment{
@@ -620,13 +620,9 @@ void Engine::render(uint32_t swapchain_index) {
 
   VkRenderingInfo rendering_info{
       .sType = VK_STRUCTURE_TYPE_RENDERING_INFO_KHR,
-      .renderArea =
-          {                  
-           .offset = {0, 0}, 
-           .extent =
-               {
-                .width = context.swapchain_dimensions.width,
-                .height = context.swapchain_dimensions.height}},
+      .renderArea = {.offset = {0, 0},
+                     .extent = {.width = context.swapchain_dimensions.width,
+                                .height = context.swapchain_dimensions.height}},
       .layerCount = 1,
       .colorAttachmentCount = 1,
       .pColorAttachments = &color_attachment,
@@ -662,18 +658,16 @@ void Engine::render(uint32_t swapchain_index) {
     VkDeviceSize offset = {0};
     vkCmdBindVertexBuffers(cmd, 0, 1, &vertexBuffer.buffer, &offset);
     const auto &indexBuffer = meshBuffer.indexBuffer;
-    vkCmdBindIndexBuffer(cmd, indexBuffer.buffer, 0,
-                         VK_INDEX_TYPE_UINT32);
+    vkCmdBindIndexBuffer(cmd, indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
     uint32_t dynamic_offset =
         static_cast<uint32_t>(i * context.uboBufferSizePerNode);
     vkCmdBindDescriptorSets(
         cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline_layout, 0, 1,
         &context.per_frame[swapchain_index].descriptorSet, 1, &dynamic_offset);
-    vkCmdDrawIndexed(
-          cmd,
-          static_cast<uint32_t>(node->mesh()->numberOfIndices()), 1, 0, 0,
-          0);
+    vkCmdDrawIndexed(cmd,
+                     static_cast<uint32_t>(node->mesh()->numberOfIndices()), 1,
+                     0, 0, 0);
   }
 
   vkCmdEndRenderingKHR(cmd);
@@ -731,18 +725,18 @@ VkResult Engine::present_image(uint32_t index) {
 }
 
 void Engine::transitionImageLayout(VkCommandBuffer cmd, VkImage image,
-                                     VkImageLayout oldLayout,
-                                     VkImageLayout newLayout,
-                                     VkAccessFlags2 srcAccessMask,
-                                     VkAccessFlags2 dstAccessMask,
-                                     VkPipelineStageFlags2 srcStage,
-                                     VkPipelineStageFlags2 dstStage) {
+                                   VkImageLayout oldLayout,
+                                   VkImageLayout newLayout,
+                                   VkAccessFlags2 srcAccessMask,
+                                   VkAccessFlags2 dstAccessMask,
+                                   VkPipelineStageFlags2 srcStage,
+                                   VkPipelineStageFlags2 dstStage) {
   VkImageMemoryBarrier2 image_barrier{
       .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2,
-      .srcStageMask = srcStage,       
-      .srcAccessMask = srcAccessMask, 
-      .dstStageMask = dstStage,       
-      .dstAccessMask = dstAccessMask, 
+      .srcStageMask = srcStage,
+      .srcAccessMask = srcAccessMask,
+      .dstStageMask = dstStage,
+      .dstAccessMask = dstAccessMask,
 
       .oldLayout = oldLayout,
       .newLayout = newLayout,
@@ -752,20 +746,15 @@ void Engine::transitionImageLayout(VkCommandBuffer cmd, VkImage image,
 
       .image = image,
 
-      .subresourceRange = {
-          .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-          .levelCount = 1,     
-          .baseArrayLayer = 0, 
-          .layerCount = 1      
-      }};
+      .subresourceRange = {.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                           .levelCount = 1,
+                           .baseArrayLayer = 0,
+                           .layerCount = 1}};
 
-  VkDependencyInfo dependency_info{
-      .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
-      .dependencyFlags = 0,        
-      .imageMemoryBarrierCount = 1,
-      .pImageMemoryBarriers =
-          &image_barrier
-  };
+  VkDependencyInfo dependency_info{.sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
+                                   .dependencyFlags = 0,
+                                   .imageMemoryBarrierCount = 1,
+                                   .pImageMemoryBarriers = &image_barrier};
   vkCmdPipelineBarrier2KHR(cmd, &dependency_info);
 }
 
@@ -817,9 +806,11 @@ Engine::~Engine() {
   vmaDestroyImage(context.vma_allocator, context.depthImage,
                   context.depthAllocation);
 
-  for (auto &pair: context.meshBufferMap) {
-    vmaDestroyBuffer(context.vma_allocator, pair.second.vertexBuffer.buffer, pair.second.vertexBuffer.allocation);
-    vmaDestroyBuffer(context.vma_allocator, pair.second.indexBuffer.buffer, pair.second.indexBuffer.allocation);
+  for (auto &pair : context.meshBufferMap) {
+    vmaDestroyBuffer(context.vma_allocator, pair.second.vertexBuffer.buffer,
+                     pair.second.vertexBuffer.allocation);
+    vmaDestroyBuffer(context.vma_allocator, pair.second.indexBuffer.buffer,
+                     pair.second.indexBuffer.allocation);
   }
 
   vmaDestroyAllocator(context.vma_allocator);
@@ -1013,7 +1004,7 @@ bool Engine::resize(const uint32_t, const uint32_t) {
 
 VkSurfaceFormatKHR
 Engine::selectSurfaceFormat(VkPhysicalDevice gpu, VkSurfaceKHR surface,
-                              std::vector<VkFormat> const &preferred_formats) {
+                            std::vector<VkFormat> const &preferred_formats) {
   uint32_t surface_format_count;
   vkGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &surface_format_count,
                                        nullptr);
@@ -1066,8 +1057,7 @@ void Engine::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkQueueSubmit(context.queue, 1, &submitInfo, VK_NULL_HANDLE);
   vkQueueWaitIdle(context.queue);
 
-  vkFreeCommandBuffers(context.device, context.commandPool, 1,
-                       &commandBuffer);
+  vkFreeCommandBuffers(context.device, context.commandPool, 1, &commandBuffer);
 }
 
 AllocatedBuffer Engine::createBuffer(VkDeviceSize size,

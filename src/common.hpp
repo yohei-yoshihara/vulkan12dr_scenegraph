@@ -31,7 +31,7 @@
   do {                                                                         \
     VkResult err = x;                                                          \
     if (err) {                                                                 \
-      throw std::runtime_error(std::string("Detected Vulkan error: ") +                     \
+      throw std::runtime_error(std::string("Detected Vulkan error: ") +        \
                                string_VkResult(err));                          \
     }                                                                          \
   } while (0)

@@ -13,8 +13,8 @@
 #include "types.hpp"
 
 #include <memory>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
 
 class Node;
 class Mesh;
@@ -81,7 +81,7 @@ class Engine {
     VmaAllocator vma_allocator = VK_NULL_HANDLE;
 
     // Vertex Buffer
-    std::unordered_map<std::shared_ptr<Mesh>, MeshBuffer> meshBufferMap; 
+    std::unordered_map<std::shared_ptr<Mesh>, MeshBuffer> meshBufferMap;
 
     // UBO
     VkDescriptorPool descriptorPool = VK_NULL_HANDLE;
@@ -139,17 +139,17 @@ public:
 
   // Utility Methos
   void transitionImageLayout(VkCommandBuffer cmd, VkImage image,
-                               VkImageLayout oldLayout, VkImageLayout newLayout,
-                               VkAccessFlags2 srcAccessMask,
-                               VkAccessFlags2 dstAccessMask,
-                               VkPipelineStageFlags2 srcStage,
-                               VkPipelineStageFlags2 dstStage);
+                             VkImageLayout oldLayout, VkImageLayout newLayout,
+                             VkAccessFlags2 srcAccessMask,
+                             VkAccessFlags2 dstAccessMask,
+                             VkPipelineStageFlags2 srcStage,
+                             VkPipelineStageFlags2 dstStage);
 
   VkSurfaceFormatKHR
   selectSurfaceFormat(VkPhysicalDevice gpu, VkSurfaceKHR surface,
-                        std::vector<VkFormat> const &preferred_formats = {
-                            VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_B8G8R8A8_SRGB,
-                            VK_FORMAT_A8B8G8R8_SRGB_PACK32});
+                      std::vector<VkFormat> const &preferred_formats = {
+                          VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_B8G8R8A8_SRGB,
+                          VK_FORMAT_A8B8G8R8_SRGB_PACK32});
 
   VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates,
                                VkImageTiling tiling,
@@ -170,7 +170,8 @@ public:
   void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
   // バッファの作成と初期データの設定
-  AllocatedBuffer uploadBuffer(const void *data, VkDeviceSize size, VkBufferUsageFlags usage = 0);
+  AllocatedBuffer uploadBuffer(const void *data, VkDeviceSize size,
+                               VkBufferUsageFlags usage = 0);
 
   // add a node to scene graph
   void addNode(const std::shared_ptr<Node> &node);

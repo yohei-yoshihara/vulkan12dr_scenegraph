@@ -11,7 +11,7 @@ class Node : public std::enable_shared_from_this<Node> {
   std::weak_ptr<Node> m_parent;
   glm::vec3 m_pos{0.0f, 0.0f, 0.0f};
   glm::quat m_quat{glm::vec3{0.0f, 0.0f, 0.0f}};
-  std::shared_ptr<Mesh> m_mesh;  
+  std::shared_ptr<Mesh> m_mesh;
 
 public:
   Node() = default;
@@ -37,6 +37,5 @@ public:
   glm::mat4 localMatrix() const;
   glm::mat4 worldMatrix() const;
 };
-
 
 #endif
