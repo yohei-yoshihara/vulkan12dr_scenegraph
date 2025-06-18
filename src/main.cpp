@@ -274,7 +274,7 @@ void Engine::update_ubo(PerFrame &per_frame) {
     proj[1][1] *= -1;
     ubo.mvpMatrix = proj * view * model;
 
-    ubo.light = glm::vec4(5.0f, 5.0f, 5.0f, 1.0);
+    ubo.light = light;
 
     VkDeviceSize offset = i * context.uboBufferSizePerNode;
     VK_CHECK(vmaCopyMemoryToAllocation(context.vma_allocator, &ubo,

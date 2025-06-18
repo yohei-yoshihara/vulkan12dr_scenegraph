@@ -186,6 +186,10 @@ public:
     this->center = center;
   }
 
+  void setLight(const glm::vec4 &light) {
+    this->light = light;
+  }
+
 private:
   Context context;
   std::vector<std::shared_ptr<Node>> nodes;
@@ -198,4 +202,7 @@ private:
   glm::vec3 eye{1.7f, 1.7f, 1.0f};
   glm::vec3 center{0.0f, 0.0f, 0.0};
   glm::vec3 up{0.0f, 0.0f, 1.0f};
+
+  // light position
+  glm::vec4 light{0.0f, 5.0f, 5.0f, 0.25f};
 };
