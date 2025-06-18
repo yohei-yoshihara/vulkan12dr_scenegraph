@@ -263,10 +263,7 @@ void Engine::update_ubo(PerFrame &per_frame) {
   for (size_t i = 0; i < nodes.size(); ++i) {
     UniformBufferObject ubo{};
     auto model = nodes[i]->worldMatrix();
-    auto view = glm::lookAt(glm::vec3(1.2f, 1.2f, 1.0f), // eye
-                            glm::vec3(0.0f, 0.0f, 0.0f), // center
-                            glm::vec3(0.0f, 0.0f, 1.0f)  // up
-    );
+    auto view = glm::lookAt(eye, center, up);
     auto proj =
         glm::perspective(glm::radians(60.0f), // fov
                          static_cast<float>(context.swapchain.extent.width) /
@@ -900,7 +897,7 @@ bool Engine::prepare() {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     throw std::runtime_error("failed to initialize SDL");
   }
-  context.window = SDL_CreateWindow("Triangle13", 800, 600, SDL_WINDOW_VULKAN);
+  context.window = SDL_CreateWindow("Triangle12dr", windowWidth, windowHeight, SDL_WINDOW_VULKAN);
   if (context.window == nullptr) {
     throw std::runtime_error("failed to create window");
   }
@@ -912,8 +909,8 @@ bool Engine::prepare() {
     throw std::runtime_error("failed to create surface");
   }
 
-  context.swapchain_dimensions.width = 800;
-  context.swapchain_dimensions.height = 600;
+  context.swapchain_dimensions.width = windowWidth;
+  context.swapchain_dimensions.height = windowHeight;
 
   if (!context.surface) {
     throw std::runtime_error("Failed to create window surface.");
@@ -1112,18 +1109,26 @@ int main() {
 
   Engine engine;
   {
-    auto mesh = Sphere::generate(0.5, 32, 32);
-    mesh->setColor(glm::vec3(0, 0, 1));
+    auto mesh = Plane::generate(3, 3, UpAxis::Z, 1, 1);
+    mesh->setColor(glm::vec3(0, 1, 0));
     auto node = std::make_shared<Node>(mesh);
-    node->setPosition(glm::vec3(0, 0, 0));
+    node->setPosition(glm::vec3(0, 0, -0.5));
     node->setEulerAngle(glm::vec3(0, 0, 0));
     engine.addNode(node);
   }
   {
-    auto mesh = Plane::generate(2, 2, UpAxis::Z, 1, 1);
-    mesh->setColor(glm::vec3(0, 1, 0));
+    auto mesh = Sphere::generate(0.5, 32, 32);
+    mesh->setColor(glm::vec3(0, 0, 1));
     auto node = std::make_shared<Node>(mesh);
-    node->setPosition(glm::vec3(0, 0, -0.5));
+    node->setPosition(glm::vec3(1, 0, 0));
+    node->setEulerAngle(glm::vec3(0, 0, 0));
+    engine.addNode(node);
+  }
+  {
+    auto mesh = Box::generate({0.5f, 0.5f, 0.5f}, 32, 32);
+    mesh->setColor(glm::vec3(1, 0, 0));
+    auto node = std::make_shared<Node>(mesh);
+    node->setPosition(glm::vec3(-1, 0, 0));
     node->setEulerAngle(glm::vec3(0, 0, 0));
     engine.addNode(node);
   }

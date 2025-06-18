@@ -176,7 +176,26 @@ public:
   // add a node to scene graph
   void addNode(const std::shared_ptr<Node> &node);
 
+  void setWindowSize(uint32_t width, uint32_t height) {
+    windowWidth = width;
+    windowHeight = height;
+  }
+
+  void setCameraPosition(const glm::vec3 &eye, const glm::vec3 &center) {
+    this->eye = eye;
+    this->center = center;
+  }
+
 private:
   Context context;
   std::vector<std::shared_ptr<Node>> nodes;
+
+  // window size
+  uint32_t windowWidth = 800;
+  uint32_t windowHeight = 600;
+
+  // camera position
+  glm::vec3 eye{1.7f, 1.7f, 1.0f};
+  glm::vec3 center{0.0f, 0.0f, 0.0};
+  glm::vec3 up{0.0f, 0.0f, 1.0f};
 };
