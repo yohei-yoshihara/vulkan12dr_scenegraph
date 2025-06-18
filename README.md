@@ -2,7 +2,7 @@
 
 KhronosのサンプルコードTriangle 1.3を参考にし、Vulkan 1.2でエクステンションを有効にすることで動作するようにし、さらに、シーングラフを表示できるようにしたサンプルである。
 
-![スクリーンショット 2025-06-19 8 31 05](https://github.com/user-attachments/assets/63c468ed-2194-478d-a377-d25e3524c8d5)
+![スクリーンショット 2025-06-19 8 46 59](https://github.com/user-attachments/assets/3ff90862-e673-4f98-a79c-e360ec8a6fdf)
 
 Khronosのサンプルからの違いは以下の部分である。
 
