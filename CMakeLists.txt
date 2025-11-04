@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
+include(FetchContent)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 project(triangle)
@@ -53,33 +54,60 @@ set(SDL_TESTS OFF)
 set(SDL_TEST_LIBRARY OFF)
 set(SDL_SHARED OFF)
 set(SDL_STATIC ON)
-add_subdirectory(ext/src/SDL3-3.2.14)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/SDL3-3.2.14/include)
+FetchContent_Declare(
+  sdl
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_TAG release-3.2.26)
+FetchContent_MakeAvailable(sdl)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${sdl_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 
 # spdlog
-add_subdirectory(ext/src/spdlog-1.15.3)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/spdlog-1.15.3/include)
+FetchContent_Declare(
+  spdlog
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_TAG v1.16.0)
+FetchContent_MakeAvailable(spdlog)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${spdlog_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 
 # glm
-add_subdirectory(ext/src/glm)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/glm)
+FetchContent_Declare(
+  glm
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG 1.0.2)
+FetchContent_MakeAvailable(glm)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${glm_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 
 # vk-bootstrap
-add_subdirectory(ext/src/vk-bootstrap-1.4.313)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/vk-bootstrap-1.4.313/src)
+FetchContent_Declare(
+  vk_bootstrap
+  GIT_REPOSITORY https://github.com/charles-lunarg/vk-bootstrap
+  GIT_TAG v1.4.328 
+)
+FetchContent_MakeAvailable(vk_bootstrap)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${vk_bootstrap_SOURCE_DIR}/src)
 target_link_libraries(${PROJECT_NAME} PRIVATE vk-bootstrap::vk-bootstrap)
 
 # Vulkan Memory Allocator
-add_subdirectory(ext/src/VulkanMemoryAllocator-3.3.0)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/VulkanMemoryAllocator-3.3.0/include)
+FetchContent_Declare(
+  vma
+  GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+  GIT_TAG v3.3.0 
+)
+FetchContent_MakeAvailable(vma)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${vma_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE VulkanMemoryAllocator)
 
 # volk
-add_subdirectory(ext/src/volk-1.4.313)
-target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ext/src/volk-1.4.313)
+FetchContent_Declare(
+  volk
+  GIT_REPOSITORY https://github.com/zeux/volk.git
+  GIT_TAG vulkan-sdk-1.4.328.1 
+)
+FetchContent_MakeAvailable(volk)
+target_include_directories(${PROJECT_NAME} PRIVATE SYSTEM ${volk_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE volk::volk)
 
 # Vulkan Headers
