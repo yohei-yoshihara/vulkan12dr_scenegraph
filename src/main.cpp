@@ -18,7 +18,8 @@ void Engine::init_instance() {
 
   std::vector<const char *> required_instance_extensions{
       VK_KHR_SURFACE_EXTENSION_NAME,
-      VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME};
+      // VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME
+    };
 
   uint32_t sdlExtensionCount = 0;
   auto sdlExtensions = SDL_Vulkan_GetInstanceExtensions(&sdlExtensionCount);
@@ -27,10 +28,10 @@ void Engine::init_instance() {
 
   vkb::InstanceBuilder builder;
   auto inst_ret =
-      builder.set_app_name("Simple Scene Graph V1.2 + Direct Rendering")
+      builder.set_app_name("Simple Scene Graph V1.4 + Direct Rendering")
           .set_engine_name("No Engine")
           .enable_extensions(required_instance_extensions)
-          .require_api_version(VK_MAKE_VERSION(1, 2, 0))
+          .require_api_version(VK_MAKE_VERSION(1, 4, 0))
           .build();
   if (!inst_ret) {
     throw std::runtime_error("failed to create instance");
@@ -43,38 +44,46 @@ void Engine::init_instance() {
 void Engine::init_device() {
   LOGI("Initializing Vulkan device.");
 
-  VkPhysicalDeviceSynchronization2Features enable_sync2_features = {
-      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES,
-      .synchronization2 = VK_TRUE};
-  VkPhysicalDeviceExtendedDynamicStateFeaturesEXT
-      enable_extended_dynamic_state_features = {
-          .sType =
-              VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
-          .pNext = &enable_sync2_features,
-          .extendedDynamicState = VK_TRUE};
+  // VkPhysicalDeviceSynchronization2Features enable_sync2_features = {
+  //     .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES,
+  //     .synchronization2 = VK_TRUE};
+  // VkPhysicalDeviceExtendedDynamicStateFeaturesEXT
+  //     enable_extended_dynamic_state_features = {
+  //         .sType =
+  //             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
+  //         .pNext = &enable_sync2_features,
+  //         .extendedDynamicState = VK_TRUE};
+
+  VkPhysicalDeviceVulkan14Features features14 = {
+      .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
+      .pushDescriptor = VK_TRUE,
+      .maintenance5 = VK_TRUE,
+      .maintenance6 = VK_TRUE,
+  };
 
   VkPhysicalDeviceVulkan13Features features13 = {
       .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
-      .pNext = &enable_extended_dynamic_state_features,
+      // .pNext = &enable_extended_dynamic_state_features,
       .synchronization2 = VK_TRUE,
       .dynamicRendering = VK_TRUE,
   };
 
   VkPhysicalDeviceVulkan12Features features12{
       .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-      .pNext = &enable_extended_dynamic_state_features,
+      // .pNext = &enable_extended_dynamic_state_features,
       .descriptorIndexing = VK_TRUE,
       .bufferDeviceAddress = VK_TRUE,
   };
 
   vkb::PhysicalDeviceSelector selector{context.instance};
   auto phys_ret = selector
-                      .add_required_extensions({
-                          VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
-                          VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME,
-                          VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
-                      })
-                      .set_minimum_version(1, 2)
+                      // .add_required_extensions({
+                          // VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME,
+                          // VK_EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME,
+                          // VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME,
+                      // })
+                      .set_minimum_version(1, 4)
+                      .set_required_features_14(features14)
                       .set_required_features_13(features13)
                       .set_required_features_12(features12)
                       .set_surface(context.surface)
@@ -625,7 +634,7 @@ void Engine::render(uint32_t swapchain_index) {
       .pColorAttachments = &color_attachment,
       .pDepthAttachment = &depth_attachment};
 
-  vkCmdBeginRenderingKHR(cmd, &rendering_info);
+  vkCmdBeginRendering(cmd, &rendering_info);
 
   vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, context.pipeline);
 
@@ -642,11 +651,11 @@ void Engine::render(uint32_t swapchain_index) {
 
   vkCmdSetScissor(cmd, 0, 1, &scissor);
 
-  vkCmdSetCullModeEXT(cmd, VK_CULL_MODE_NONE);
+  vkCmdSetCullMode(cmd, VK_CULL_MODE_NONE);
 
-  vkCmdSetFrontFaceEXT(cmd, VK_FRONT_FACE_CLOCKWISE);
+  vkCmdSetFrontFace(cmd, VK_FRONT_FACE_CLOCKWISE);
 
-  vkCmdSetPrimitiveTopologyEXT(cmd, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+  vkCmdSetPrimitiveTopology(cmd, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
 
   for (std::size_t i = 0; i < nodes.size(); ++i) {
     const auto &node = nodes[i];
@@ -667,7 +676,7 @@ void Engine::render(uint32_t swapchain_index) {
                      0, 0, 0);
   }
 
-  vkCmdEndRenderingKHR(cmd);
+  vkCmdEndRendering(cmd);
 
   transitionImageLayout(
       cmd, context.swapchain_images[swapchain_index],
@@ -752,7 +761,7 @@ void Engine::transitionImageLayout(VkCommandBuffer cmd, VkImage image,
                                    .dependencyFlags = 0,
                                    .imageMemoryBarrierCount = 1,
                                    .pImageMemoryBarriers = &image_barrier};
-  vkCmdPipelineBarrier2KHR(cmd, &dependency_info);
+  vkCmdPipelineBarrier2(cmd, &dependency_info);
 }
 
 Engine::~Engine() {
