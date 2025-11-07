@@ -1,14 +1,17 @@
-cmake_minimum_required(VERSION 3.28)
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    set(USER_HOME_DIRECTORY $ENV{USERPROFILE})
+﻿cmake_minimum_required(VERSION 3.28)
+
+# FetchContent
+if(WIN32)
+    file(TO_CMAKE_PATH "$ENV{USERPROFILE}" USER_HOME_DIRECTORY)
 else()
     set(USER_HOME_DIRECTORY $ENV{HOME})
 endif()
-set(FETCHCONTENT_BASE_DIR ${USER_HOME_DIRECTORY}/.cache/FetchContent)
+set(FETCHCONTENT_BASE_DIR "${USER_HOME_DIRECTORY}/.cache/FetchContent")
 include(FetchContent)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-project(triangle)
+project(scenegraph)
 
 add_executable(${PROJECT_NAME}
   src/main.hpp src/main.cpp

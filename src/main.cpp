@@ -1,4 +1,4 @@
-#include "common.hpp"
+﻿#include "common.hpp"
 
 #include "main.hpp"
 #include "node.hpp"
@@ -56,9 +56,9 @@ void Engine::init_device() {
 
   VkPhysicalDeviceVulkan14Features features14 = {
       .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
-      .pushDescriptor = VK_TRUE,
       .maintenance5 = VK_TRUE,
       .maintenance6 = VK_TRUE,
+      .pushDescriptor = VK_TRUE,
   };
 
   VkPhysicalDeviceVulkan13Features features13 = {
@@ -126,8 +126,8 @@ void Engine::init_device() {
   VmaAllocatorCreateInfo createInfo{
       .physicalDevice = context.physicalDevice,
       .device = context.device,
-      .instance = context.instance,
       .pVulkanFunctions = &functions,
+      .instance = context.instance,
   };
   VK_CHECK(vmaCreateAllocator(&createInfo, &context.vma_allocator));
 }
@@ -490,9 +490,10 @@ void Engine::init_pipeline() {
       .depthWriteEnable = VK_TRUE,
       .depthCompareOp = VK_COMPARE_OP_LESS,
       .depthBoundsTestEnable = VK_FALSE,
+      .stencilTestEnable = VK_FALSE,
       .minDepthBounds = 0.0f,
       .maxDepthBounds = 1.0f,
-      .stencilTestEnable = VK_FALSE};
+  };
 
   VkPipelineMultisampleStateCreateInfo multisample{
       .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
@@ -906,7 +907,7 @@ bool Engine::prepare() {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     throw std::runtime_error("failed to initialize SDL");
   }
-  context.window = SDL_CreateWindow("Triangle12dr", windowWidth, windowHeight, SDL_WINDOW_VULKAN);
+  context.window = SDL_CreateWindow("Triangle14dr", windowWidth, windowHeight, SDL_WINDOW_VULKAN);
   if (context.window == nullptr) {
     throw std::runtime_error("failed to create window");
   }
