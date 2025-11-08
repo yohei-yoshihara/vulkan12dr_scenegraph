@@ -144,7 +144,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE volk::volk)
 # shaders
 
 set(GLSLC ${Vulkan_GLSLC_EXECUTABLE})
-set(GLSLC_OPTIONS -g --target-env=vulkan1.2)
+set(GLSLC_OPTIONS -g --target-env=vulkan1.4)
 
 add_custom_command(
     OUTPUT shaders/triangle.vert.spv
